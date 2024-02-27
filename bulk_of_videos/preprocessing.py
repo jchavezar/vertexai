@@ -10,8 +10,8 @@ from google.cloud.speech_v2.types import cloud_speech
 
 project_id = "vtxdemos"
 bucket_id = "vtxdemos-nbademos"
-video_dir_path = "videos"
-audio_dir_path = "audio"
+video_dir_path = "../videos"
+audio_dir_path = "../audio"
 gcs_audio = "gs://vtxdemos-nbademos/audio"
 gcs_output_path_speech_to_text = "gs://vtxdemos-nbademos/transcription"
 
