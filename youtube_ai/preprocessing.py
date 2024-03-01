@@ -1,26 +1,18 @@
 # %%
 import glob
-<<<<<<< HEAD
 import json
 import time
-
 import vertexai
 import gem_utils
-=======
->>>>>>> origin/v2
-import streamlit as st
 from pytube import YouTube
 from moviepy.editor import *
 from google.cloud import storage
 from google.cloud.speech_v2 import SpeechClient
 from google.cloud.speech_v2.types import cloud_speech
-<<<<<<< HEAD
 import vertexai.preview.generative_models as generative_models
 from vertexai.preview.generative_models import GenerativeModel, Tool
 
 vertexai.init(project="vtxdemos", location="us-central1")
-=======
->>>>>>> origin/v2
 
 
 class VideoLLM:
@@ -29,7 +21,6 @@ class VideoLLM:
         self.aud_directory = "audio_d"  # video downloads location
         self.project_id = "vtxdemos"
         self.bucket_id = "vtxdemos-nba-vid"
-<<<<<<< HEAD
         self.gcs_output_path_speech_to_text = "gs://vtxdemos-nba-vid/transcription_output"
         self.storage_client = storage.Client(project=self.project_id)
         self.storage_bucket = self.storage_client.get_bucket(self.bucket_id)
@@ -72,26 +63,20 @@ class VideoLLM:
                 ]
             }
         )
-=======
-        self.gcs_output_path_speech_to_text = "gs://vtxdemos-nbademos/transcription_output"
-        self.storage_client = storage.Client(project=self.project_id)
-        self.storage_bucket = self.storage_client.get_bucket(self.bucket_id)
-        self.client = SpeechClient()
->>>>>>> origin/v2
 
     # Definitions
     def download_video(self, url):
         YouTube(
-           url,
-           use_oauth=False,
-           allow_oauth_cache=True
+            url,
+            use_oauth=False,
+            allow_oauth_cache=True
         ).streams.first().download(self.vid_directory)
 
         for filename in glob.glob(f"{self.vid_directory}/*.mp4"):
             new_name = "_".join(filename.split(" "))
             os.rename(filename, new_name)
 
-    # %%
+
     # Google Cloud Storage
     # https://cloud.google.com/storage/docs/uploading-objects#storage-upload-object-python
 
@@ -136,7 +121,6 @@ class VideoLLM:
             response = operation.result(timeout=1000)
 
 
-<<<<<<< HEAD
     def get_stats(self, team_1: str, team_2: str):
         import requests
         from bs4 import BeautifulSoup
@@ -230,13 +214,13 @@ class VideoLLM:
                 "free_throws_%": text[21],
                 "power_forward": text[22],
             }
-            st.write(stats)
+            print(stats)
         return str(stats)
-    # %%
+
 
 
     def generate(self, transcript: str) -> str:
-        input_text = "Give me the last statistics for the match between the marvelous Celtics and Bulls"
+        input_text = "Give me the last statistics for the match between the mavericks and cavaliers"
         llm_model = GenerativeModel("gemini-pro")
         fc_chat = llm_model.start_chat()
         res = fc_chat.send_message(
@@ -278,26 +262,21 @@ class VideoLLM:
             return llm_res.text
 
 
-def refresh_state():
-    st.session_state['status'] = 'submitted'
-
 def main():
     bucket = storage.Client(project="vtxdemos").bucket("vtxdemos-nba-vid")
 
-    st.title("Video to Text")
-    #url = st.text_input('Enter your YouTube video link', on_change=refresh_state)
+    print("Video to Text")
     url = "https://www.youtube.com/watch?v=AdIhsl7Joms"
-    st.video(url)
     if url:
-        with st.spinner("Loading Video... Please Wait"):
-            start_time = time.time()
-            v = VideoLLM()
-            v.download_video(url)
-            st.write(f":green[Loading Video and Preprocessing Time: ]{time.time() - start_time}")
-        with st.spinner("Transforming Video to Audio and to Text"):
-            start_time = time.time()
-            v.speech_to_text()
-            st.write(f":green[Transformation Processing Time: ]{time.time() - start_time}")
+        print("Loading Video... Please Wait")
+        start_time = time.time()
+        v = VideoLLM()
+        v.download_video(url)
+        print(f":green[Loading Video and Preprocessing Time: ]{time.time() - start_time}")
+        print("Transforming Video to Audio and to Text")
+        start_time = time.time()
+        v.speech_to_text()
+        print(f":green[Transformation Processing Time: ]{time.time() - start_time}")
         audio_trans = [blob.name for blob in bucket.list_blobs(prefix="transcription")]
         str_json = bucket.blob(audio_trans[0]).download_as_text()
         dict_res = json.loads(str_json)
@@ -305,30 +284,11 @@ def main():
         for result in dict_res["results"]:
             for i in result["alternatives"]:
                 _text.append(i["transcript"])
-        st.write(_text)
-        st.info(v.generate(" ".join(_text)))
+        print(_text)
+        print(v.generate(" ".join(_text)))
 
     else:
         pass
 
-=======
-def refresh_state():
-    st.session_state['status'] = 'submitted'
-
-
-def main():
-    st.title("Video to Text")
-    url = st.text_input('Enter your YouTube video link', 'https://youtu.be/dccdadl90vs', on_change=refresh_state)
-    if url:
-        with st.spinner("Loading Video... Please Wait"):
-            v = VideoLLM()
-            v.download_video(url)
-        with st.spinner("Transforming Video to Audio and to Text"):
-            v.speech_to_text()
-    else:
-        pass
-
-
->>>>>>> origin/v2
 if __name__ == "__main__":
     main()
