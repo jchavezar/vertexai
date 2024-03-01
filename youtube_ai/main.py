@@ -5,6 +5,7 @@ import time
 
 import vertexai
 import gem_utils
+
 import streamlit as st
 from pytube import YouTube
 from moviepy.editor import *
@@ -15,6 +16,7 @@ import vertexai.preview.generative_models as generative_models
 from vertexai.preview.generative_models import GenerativeModel, Tool
 
 vertexai.init(project="vtxdemos", location="us-central1")
+
 
 
 class VideoLLM:
@@ -65,6 +67,10 @@ class VideoLLM:
                 ]
             }
         )
+        self.gcs_output_path_speech_to_text = "gs://vtxdemos-nbademos/transcription_output"
+        self.storage_client = storage.Client(project=self.project_id)
+        self.storage_bucket = self.storage_client.get_bucket(self.bucket_id)
+        self.client = SpeechClient()
 
     # Definitions
     def download_video(self, url):
@@ -296,6 +302,23 @@ def main():
 
     else:
         pass
+
+def refresh_state():
+    st.session_state['status'] = 'submitted'
+
+
+def main():
+    st.title("Video to Text")
+    url = st.text_input('Enter your YouTube video link', 'https://youtu.be/dccdadl90vs', on_change=refresh_state)
+    if url:
+        with st.spinner("Loading Video... Please Wait"):
+            v = VideoLLM()
+            v.download_video(url)
+        with st.spinner("Transforming Video to Audio and to Text"):
+            v.speech_to_text()
+    else:
+        pass
+
 
 if __name__ == "__main__":
     main()
