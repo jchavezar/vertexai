@@ -1,20 +1,26 @@
 # %%
 import glob
+<<<<<<< HEAD
 import json
 import time
 
 import vertexai
 import gem_utils
+=======
+>>>>>>> origin/v2
 import streamlit as st
 from pytube import YouTube
 from moviepy.editor import *
 from google.cloud import storage
 from google.cloud.speech_v2 import SpeechClient
 from google.cloud.speech_v2.types import cloud_speech
+<<<<<<< HEAD
 import vertexai.preview.generative_models as generative_models
 from vertexai.preview.generative_models import GenerativeModel, Tool
 
 vertexai.init(project="vtxdemos", location="us-central1")
+=======
+>>>>>>> origin/v2
 
 
 class VideoLLM:
@@ -23,6 +29,7 @@ class VideoLLM:
         self.aud_directory = "audio_d"  # video downloads location
         self.project_id = "vtxdemos"
         self.bucket_id = "vtxdemos-nba-vid"
+<<<<<<< HEAD
         self.gcs_output_path_speech_to_text = "gs://vtxdemos-nba-vid/transcription_output"
         self.storage_client = storage.Client(project=self.project_id)
         self.storage_bucket = self.storage_client.get_bucket(self.bucket_id)
@@ -65,6 +72,12 @@ class VideoLLM:
                 ]
             }
         )
+=======
+        self.gcs_output_path_speech_to_text = "gs://vtxdemos-nbademos/transcription_output"
+        self.storage_client = storage.Client(project=self.project_id)
+        self.storage_bucket = self.storage_client.get_bucket(self.bucket_id)
+        self.client = SpeechClient()
+>>>>>>> origin/v2
 
     # Definitions
     def download_video(self, url):
@@ -123,6 +136,7 @@ class VideoLLM:
             response = operation.result(timeout=1000)
 
 
+<<<<<<< HEAD
     def get_stats(self, team_1: str, team_2: str):
         import requests
         from bs4 import BeautifulSoup
@@ -297,5 +311,24 @@ def main():
     else:
         pass
 
+=======
+def refresh_state():
+    st.session_state['status'] = 'submitted'
+
+
+def main():
+    st.title("Video to Text")
+    url = st.text_input('Enter your YouTube video link', 'https://youtu.be/dccdadl90vs', on_change=refresh_state)
+    if url:
+        with st.spinner("Loading Video... Please Wait"):
+            v = VideoLLM()
+            v.download_video(url)
+        with st.spinner("Transforming Video to Audio and to Text"):
+            v.speech_to_text()
+    else:
+        pass
+
+
+>>>>>>> origin/v2
 if __name__ == "__main__":
     main()
