@@ -2,10 +2,8 @@
 import glob
 import json
 import time
-
 import vertexai
 import gem_utils
-
 import streamlit as st
 from pytube import YouTube
 from moviepy.editor import *
