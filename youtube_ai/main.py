@@ -224,7 +224,6 @@ class VideoLLM:
         return str(stats)
     # %%
 
-
     def generate(self, transcript: str) -> str:
         input_text = "Give me the last statistics for the match between the marvelous Celtics and Bulls"
         llm_model = GenerativeModel("gemini-pro")
